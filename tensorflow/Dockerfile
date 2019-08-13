@@ -1,0 +1,29 @@
+FROM tensorflow/tensorflow:1.12.0-devel-py3
+ADD requirements.txt /
+RUN apt-get update && \
+  apt-get install -y vim && \
+  apt-get install -y supervisor && \
+  apt-get install -y gosu && \
+  apt install -y libsm6 libxext6 libxrender1 && \
+  apt-get install wget && \
+  apt-get install -y tzdata && \
+  pip install pip -U && \
+  pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+  pip install --user numpy && \
+  pip install --user keras && \
+  pip install --user keras-resnet && \
+  pip install --user six && \
+  pip install --user scipy && \
+  pip install --user Pillow && \
+  pip install --user opencv-python && \
+  pip install --user progressbar2 && \
+  pip install --user Cython && \
+  pip install --user contextlib2 && \
+  cd / && \
+  pip install -r requirements.txt && \
+  echo "export LANG=C.UTF-8" >> ~/.bashrc && \
+  echo "export LC_ALL=C.UTF-8" >> ~/.bashrc
+
+COPY docker-entrypoint.sh /
+RUN ["chmod", "+x", "/docker-entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]

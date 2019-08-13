@@ -1,0 +1,57 @@
+version: '3'
+services:
+  tensorflow:
+    container_name: object-detection
+    build:
+      context: ./tensorflow
+      dockerfile: Dockerfile
+    ports:
+      - '5555:5555'
+      - '6006:6006'
+    env_file:
+      - ./tensorflow/container.env      
+    networks:
+      - mosquitto
+      - default
+    volumes:
+      - ./www:/var/www/:cached
+      - ./keras:/keras:cached
+      - ./MaskRCNN:/MaskRCNN:cached
+      - ./tensorflow/supervisor:/etc/supervisor/conf.d
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    # command: ["tail", "-f", "/dev/null"]
+    command:
+      [
+        '/bin/bash',
+        '-c',
+        'python2 /usr/bin/supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf',
+      ]
+  rabbitmq:
+    container_name: docker-rabbitmq
+    build:
+      context: ./rabbitmq
+      dockerfile: Dockerfile
+    networks:
+      - default
+    ports:
+      - '15673:15672' # port expose corresponding local computer port -> container port
+    volumes:
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    command: ['/bin/bash', '/init.sh']
+  redis:
+    environment:
+      - TZ=Asia/Shanghai
+    container_name: docker-redis
+    image: redis:4.0-alpine
+    volumes: 
+      - "/etc/localtime:/etc/localtime:ro"
+    ports:
+      - "6380:6379"
+    networks:
+      - default
+networks:
+  mosquitto:
+    external:
+      name: docker-mosquitto-with-auth_default

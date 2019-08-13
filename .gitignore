@@ -1,0 +1,8 @@
+www/tf_object_detection/logs
+mysql/data
+.vscode
+venv
+tensorflow/supervisor
+www
+container.env
+

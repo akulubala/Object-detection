@@ -1,0 +1,7 @@
+[submodule "keras"]
+	path = keras
+	url = git@bitbucket.org:akulubala_/keras-retinanet.git
+	branch = master
+[submodule "MaskRCNN"]
+	path = MaskRCNN
+	url = /private/var/www/html/docker-tensorflow/MaskRCNN
